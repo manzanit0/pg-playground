@@ -28,55 +28,38 @@ provider "postgresql" {
   connect_timeout = 15
 }
 
-removed {
-  from = postgresql_schema.this
-  lifecycle {
-    destroy = false
-  }
+# Let's create a new role named "john".
+resource "postgresql_role" "my_role" {
+  name     = "john"
+  login    = true
+  password = "6789"
 }
-# resource "postgresql_schema" "this" {
-#   name     = "public"
-#   owner    = local.user_2
-#   database = local.database
-# }
 
-resource "postgresql_schema" "this_2" {
-  name     = "public"
-  owner    = local.user_1
+# We'll grant "john" SELECT access to the "persons" table in the "public" schema.
+resource "postgresql_grant" "readonly_tables" {
+  database    = local.database
+  role        = postgresql_role.my_role.name
+  schema      = "public"
+  object_type = "table"
+  objects     = [local.table]
+  privileges  = ["SELECT"]
+
+  depends_on = [
+    postgresql_role.my_role
+  ]
+}
+
+# Now we'll grant some default priviledges for all future tables.
+resource "postgresql_default_privileges" "read_only_tables" {
+  role     = postgresql_role.my_role.name
   database = local.database
-}
+  schema   = "public"
 
-# # Let's create a new role named "john".
-# resource "postgresql_role" "my_role" {
-#   name     = "john"
-#   login    = true
-#   password = "6789"
-# }
-#
-# # We'll grant "john" SELECT access to the "persons" table in the "public" schema.
-# resource "postgresql_grant" "readonly_tables" {
-#   database    = local.database
-#   role        = postgresql_role.my_role.name
-#   schema      = "public"
-#   object_type = "table"
-#   objects     = [local.table]
-#   privileges  = ["SELECT"]
-#
-#   depends_on = [
-#     postgresql_role.my_role
-#   ]
-# }
-#
-# resource "postgresql_default_privileges" "read_only_tables" {
-#   role     = postgresql_role.my_role.name
-#   database = local.database
-#   schema   = "public"
-#
-#   owner       = "db_owner"
-#   object_type = "table"
-#   privileges  = ["SELECT"]
-#
-#   depends_on = [
-#     postgresql_grant.readonly_tables
-#   ]
-# }
+  owner       = local.user_2
+  object_type = "table"
+  privileges  = ["SELECT"]
+
+  depends_on = [
+    postgresql_grant.readonly_tables
+  ]
+}
