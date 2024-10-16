@@ -161,7 +161,7 @@ Time: 0.008s
 Trying to remove either of the `postgresql_schema` resources spits out the destroy error again. The right way
 to go about this would be with the `remove` directive:
 
-```
+```terraform
 # NOTE: remove the resource in the same plan; no need to do it in two cycles!
 removed {
   from = postgresql_schema.this
