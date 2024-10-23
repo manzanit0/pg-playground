@@ -20,7 +20,7 @@ locals {
 
 provider "postgresql" {
   host            = "localhost"
-  port            = 5432
+  port            = 5438
   database        = local.database
   username        = "root"
   password        = "1234"
@@ -50,16 +50,16 @@ resource "postgresql_grant" "readonly_tables" {
 }
 
 # Now we'll grant some default priviledges for all future tables.
-resource "postgresql_default_privileges" "read_only_tables" {
-  role     = postgresql_role.my_role.name
-  database = local.database
-  schema   = "public"
-
-  owner       = local.user_2
-  object_type = "table"
-  privileges  = ["SELECT"]
-
-  depends_on = [
-    postgresql_grant.readonly_tables
-  ]
-}
+# resource "postgresql_default_privileges" "read_only_tables" {
+#   role     = postgresql_role.my_role.name
+#   database = local.database
+#   schema   = "public"
+#
+#   owner       = local.user_2
+#   object_type = "table"
+#   privileges  = ["SELECT"]
+#
+#   depends_on = [
+#     postgresql_grant.readonly_tables
+#   ]
+# }

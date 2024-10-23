@@ -193,3 +193,84 @@ Plan: 0 to add, 0 to change, 0 to destroy.
 │ 
 │ After applying this plan, Terraform will no longer manage these objects. You will need to import them into Terraform to manage them again.
 ```
+
+## Removing default priviledges
+
+```shell
+pg-playground/terraform master*​ 4m16s 
+❯ pgcli postgresql://root:1234@localhost:5438/playground_db
+Server: PostgreSQL 13.16 (Debian 13.16-1.pgdg110+1)
+Version: 4.1.0
+Home: http://pgcli.com
+root@localhost:playground_db> \ddp
++--------+--------+-------+-------------------+
+| Owner  | Schema | Type  | Access privileges |
+|--------+--------+-------+-------------------|
+| miriam | public | table | john=r/miriam     |
++--------+--------+-------+-------------------+
+SELECT 1
+Time: 0.012s
+root@localhost:playground_db>                                                                                                                                              
+Goodbye!
+
+pg-playground/terraform master*​ 5s 
+❯ terraform apply                                          
+postgresql_default_privileges.read_only_tables: Refreshing state... [id=john_playground_db_public_miriam_table]
+postgresql_role.my_role: Refreshing state... [id=john]
+postgresql_grant.readonly_tables: Refreshing state... [id=john_playground_db_public_table_persons]
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # postgresql_default_privileges.read_only_tables will be destroyed
+  # (because postgresql_default_privileges.read_only_tables is not in configuration)
+  - resource "postgresql_default_privileges" "read_only_tables" {
+      - database          = "playground_db" -> null
+      - id                = "john_playground_db_public_miriam_table" -> null
+      - object_type       = "table" -> null
+      - owner             = "miriam" -> null
+      - privileges        = [
+          - "SELECT",
+        ] -> null
+      - role              = "john" -> null
+      - schema            = "public" -> null
+      - with_grant_option = false -> null
+    }
+
+Plan: 0 to add, 0 to change, 1 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+postgresql_default_privileges.read_only_tables: Destroying... [id=john_playground_db_public_miriam_table]
+postgresql_default_privileges.read_only_tables: Destruction complete after 0s
+
+Apply complete! Resources: 0 added, 0 changed, 1 destroyed.
+
+pg-playground/terraform master*​ 
+❯ pgcli postgresql://root:1234@localhost:5438/playground_db
+Server: PostgreSQL 13.16 (Debian 13.16-1.pgdg110+1)
+Version: 4.1.0
+Home: http://pgcli.com
+root@localhost:playground_db> \dt+ persons
++--------+---------+-------+-------+------------+-------------+
+| Schema | Name    | Type  | Owner | Size       | Description |
+|--------+---------+-------+-------+------------+-------------|
+| public | persons | table | bob   | 8192 bytes | <null>      |
++--------+---------+-------+-------+------------+-------------+
+SELECT 1
+Time: 0.014s
+root@localhost:playground_db> \ddp
++-------+--------+------+-------------------+
+| Owner | Schema | Type | Access privileges |
+|-------+--------+------+-------------------|
++-------+--------+------+-------------------+
+SELECT 0
+Time: 0.010s
+root@localhost:playground_db>
+```
