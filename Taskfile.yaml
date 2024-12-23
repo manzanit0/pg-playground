@@ -1,0 +1,12 @@
+version: "3"
+
+tasks:
+  up:
+    cmd: docker compose up -d db
+
+  connect-bob:
+    cmd: pgcli postgresql://bob:1234@localhost:5438/playground_db
+
+  connect-root:
+    cmd: pgcli postgresql://root:1234@localhost:5438/playground_db
+

@@ -6,7 +6,6 @@
 $ pgcli postgresql://bob:1234@localhost:5432/playground_db
 ```
 
-
 ## Understanding DB ownership
 
 Bob owns the `playground_db` database, not the root user:
