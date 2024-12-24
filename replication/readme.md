@@ -3,6 +3,7 @@
 ## TLDR
 
 Question: How can I upgrade a postgres server with as little downtime as possible?
+
 Answer: Set up logical replication and then point clients to the replicated server.
 
 ## Longer version
@@ -23,7 +24,6 @@ Logical replication is only for data and only in regular tables, i,e, not views.
 
 This means that the new server should have all the schema definitions up to date before starting replication.
 
-
 ### Ensure `wal_level` and other settings are correctly configured
 
 ```
@@ -37,7 +37,6 @@ Checkout the [main.tf][./terraform/main.tf]. That contains all the needed change
 ### Troubleshooting the replication
 
 Wait, it's not working. How can I know what link is broken?
-
 
 On the **publisher** side check:
 
