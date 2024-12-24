@@ -44,5 +44,3 @@ SELECT
     receipt_fixtures.image_data
 FROM receipts
 CROSS JOIN receipt_fixtures;
-
--- Very naive experiments:
