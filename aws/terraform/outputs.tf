@@ -1,17 +1,35 @@
-output "rds_hostname" {
+output "source_rds_hostname" {
   description = "RDS instance hostname"
-  value       = aws_db_instance.education.address
+  value       = aws_db_instance.source.address
   sensitive   = true
 }
 
-output "rds_port" {
+output "source_rds_port" {
   description = "RDS instance port"
-  value       = aws_db_instance.education.port
+  value       = aws_db_instance.source.port
   sensitive   = true
 }
 
-output "rds_username" {
+output "source_rds_username" {
   description = "RDS instance root username"
-  value       = aws_db_instance.education.username
+  value       = aws_db_instance.source.username
+  sensitive   = true
+}
+
+output "target_rds_hostname" {
+  description = "RDS instance hostname"
+  value       = aws_db_instance.target.address
+  sensitive   = true
+}
+
+output "target_rds_port" {
+  description = "RDS instance port"
+  value       = aws_db_instance.target.port
+  sensitive   = true
+}
+
+output "target_rds_username" {
+  description = "RDS instance root username"
+  value       = aws_db_instance.target.username
   sensitive   = true
 }
